@@ -1,0 +1,31 @@
+name: Test solutions
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    # Every day at 4am UTC (10pm Chicago, 5am Geneva)
+    - cron: "00 4 * * *"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install the dependencies
+        run: |
+          python -m pip install nbconvert awkward hist[plot] uproot vector
+      - name: Test the solutions
+        working-directory: site/files
+        run: |
+          jupyter nbconvert --to python solutions-NO-PEEKING.ipynb
+          sed 's/^# \(In\[[0-9]*\]:\)/print("\1") #/' solutions-NO-PEEKING.py | sed 's/^import piplite.*//' | sed 's/^await piplite.install//' > solutions-NO-PEEKING-RUN.py
+          cat -n solutions-NO-PEEKING-RUN.py
+          python solutions-NO-PEEKING-RUN.py
