@@ -8,8 +8,6 @@ updates:
       actions:
         patterns:
           - '*'
-    cooldown:
-      default-days: 7
 
   - package-ecosystem: pip
     directory: /site
@@ -19,5 +17,3 @@ updates:
       pip-dependencies:
         patterns:
           - '*'
-    cooldown:
-      default-days: 7
